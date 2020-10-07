@@ -8,14 +8,20 @@ var program = require('commander'),
   prettyPrintFlag,
   testFlag,
   swaggerInput,
-  swaggerData;
+  swaggerData,
+  headerParameterDisabledFlag,
+  queryParameterDisabledFlag,
+  accessToken;
 
 program
   .version(require('../package.json').version, '-v, --version')
   .option('-s, --spec <spec>', 'Convert given OPENAPI 3.0.0 spec to Postman Collection v2.0')
   .option('-o, --output <output>', 'Write the collection to an output file')
   .option('-t, --test', 'Test the OPENAPI converter')
-  .option('-p, --pretty', 'Pretty print the JSON file');
+  .option('-p, --pretty', 'Pretty print the JSON file')
+  .option('-H, --headerParameterDisabled', 'Header parameters are DISABLED in the Postman Collection')
+  .option('-Q, --queryParameterDisabled', 'Query parameters are DISABLED in the Postman Collection')
+  .option('-A, --accessToken <accessToken>', 'Default value for a pretend OAuth2.0 access token');
 
 
 program.on('--help', function() {
@@ -41,6 +47,9 @@ inputFile = program.spec;
 outputFile = program.output || false;
 testFlag = program.test || false;
 prettyPrintFlag = program.pretty || false;
+headerParameterDisabledFlag = program.headerParameterDisabled || false;
+queryParameterDisabledFlag = program.queryParameterDisabled || false;
+accessToken = program.accessToken || false;
 swaggerInput;
 swaggerData;
 
@@ -55,14 +64,14 @@ swaggerData;
 function writetoFile(prettyPrintFlag, file, collection) {
   if (prettyPrintFlag) {
     fs.writeFile(file, JSON.stringify(collection, null, 4), (err) => {
-      if (err) { console.log('Could not write to file', err); }
-      console.log('Conversion successful', 'Collection written to file');
+      if (err) { console.error('Could not write to file', err); }
+      console.error('Conversion successful', 'Collection written to file');
     });
   }
   else {
     fs.writeFile(file, JSON.stringify(collection), (err) => {
-      if (err) { console.log('Could not write to file', err); }
-      console.log('Conversion successful', 'Collection written to file');
+      if (err) { console.error('Could not write to file', err); }
+      console.error('Conversion successful', 'Collection written to file');
     });
   }
 }
@@ -76,7 +85,11 @@ function convert(swaggerData) {
   Converter.convert({
     type: 'string',
     data: swaggerData
-  }, {}, (err, status) => {
+  },
+  { disableQueryParams: queryParameterDisabledFlag,
+    disableHeaderParams: headerParameterDisabledFlag,
+    accessToken: accessToken
+  }, (err, status) => {
     if (err) {
       return console.error(err);
     }

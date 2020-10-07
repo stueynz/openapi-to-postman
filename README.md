@@ -92,6 +92,8 @@ function (err, result) {
 * `'schemaFaker'(boolean)`:  whether to use json-schema-faker for schema conversion. Default: `true`
 * `'requestNameSource'(string)`: The strategy to use to generate request names. url: use the request's URL as the name, fallback: Use the summary/operationId/URL (in that order) Default: `fallback`
 * `'indentCharacter' (string)`: The character to use per level of indentation for JSON/XML data. Default: `' '(space)`
+* `'enableHeaderParams' (boolean)`: Flag responsible for making all header parameters enabled by default in the output collection
+* `'enableQueryParams' (boolean)`: Flag responsible for making all query parameters enabled by default in the output collection
 
 ### ConversionResult
 
@@ -166,6 +168,12 @@ The converter can be used as a CLI tool as well. The following [command line opt
 - `-t`, `--test`  
   Used to test the collection with an in-built sample specification
 
+- `-H`, `--headerParameterEnabled`  
+  Set the all header parameters to be enabled in the output collection
+
+- `-Q`, `--queryParameterEnabled`  
+  Set the all query parameters to be enabled in the output collection
+  
 - `-p`, `--pretty`  
   Used to pretty print the collection object while writing to a file
 
